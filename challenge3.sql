@@ -37,28 +37,26 @@ group by
 order by movies_count desc
 limit 1;
 
--- use having
-SELECT 
-    d.id, 
-    d.first_name, 
-    d.last_name, 
-    COUNT(*) as movies_count
-FROM directors d
-JOIN movies_directors md ON md.director_id = d.id
-GROUP BY d.id, d.first_name, d.last_name
-HAVING COUNT(*) = (
-    SELECT MAX(movies_count)
-    FROM (
-        SELECT 
-            d.id, 
-            d.first_name, 
-            d.last_name, 
-            COUNT(*) as movies_count
-        FROM directors d
-        JOIN movies_directors md ON md.director_id = d.id
-        GROUP BY d.id
-    ) subquery
-);
+select d.id, d.first_name, d.last_name, count(*) as movies_count
+from
+    directors d
+    join movies_directors md on md.director_id = d.id
+group by
+    d.id,
+    d.first_name,
+    d.last_name
+having
+    count(*) = (
+        select max(movies_count)
+        from (
+                select d.id, d.first_name, d.last_name, count(*) as movies_count
+                from
+                    directors d
+                    join movies_directors md on md.director_id = d.id
+                group by
+                    d.id
+            ) subquery
+    );
 
 -- 4. Mendapatkan tahun tersibuk sepanjang masa
 select year, count(*) as movies_count
@@ -67,6 +65,22 @@ group by
     year
 order by movies_count desc
 limit 1;
+
+--use having
+select year, count(*) as movies_count
+from movies
+group by
+    year
+having
+    count(*) = (
+        select max(movies_count)
+        from (
+                select year, count(*) as movies_count
+                from movies
+                group by
+                    year
+            ) subquery
+    );
 
 -- 5. Mendapatkan movies dengan genre yang dibuatkan menjadi 1 column,
 --    (value dipisahkan dengan koma) dengan menggunakan string_agg
