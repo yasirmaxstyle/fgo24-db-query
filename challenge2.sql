@@ -5,4 +5,4 @@ join movies_directors md on md.movie_id = m.id
 join directors d on d.id = md.director_id
 join directors_genres dg on dg.director_id = md.director_id
 join movies_genres mg on mg.movie_id = m.id and dg.genre = mg.genre
-limit 10;
+limit 50;
